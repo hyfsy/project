@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.12.RELEASE</version>
+        <relativePath/>
+    </parent>
+    <groupId>com.hyf</groupId>
+    <artifactId>async</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <properties>
+        <hyf.common.version>1.0.1-SNAPSHOT</hyf.common.version>
+        <hyf.dao.version>1.0.0</hyf.dao.version>
+
+        <java.version>1.8</java.version>
+        <mapstruct.version>1.4.1.Final</mapstruct.version>
+        <lombok.version>1.18.4</lombok.version>
+        <fastjson.version>1.2.80</fastjson.version>
+        <skywalking.version>8.6.0</skywalking.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.skywalking</groupId>
+            <artifactId>apm-toolkit-trace</artifactId>
+            <version>${skywalking.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.5.3.2</version>
+        </dependency>
+
+        <!-- <dependency> -->
+        <!--     <groupId>com.hyf</groupId> -->
+        <!--     <artifactId>hyf-common-base</artifactId> -->
+        <!--     <version>${hyf.common.version}</version> -->
+        <!--     <scope>provided</scope> -->
+        <!-- </dependency> -->
+        <!-- <dependency> -->
+        <!--     <groupId>com.hyf</groupId> -->
+        <!--     <artifactId>hyf-product-dao</artifactId> -->
+        <!--     <version>${hyf.dao.version}</version> -->
+        <!--     <scope>provided</scope> -->
+        <!-- </dependency> -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+</project>

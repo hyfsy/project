@@ -1,0 +1,1 @@
+java -jar ./lib/exam-1.0.0-SNAPSHOT.jar

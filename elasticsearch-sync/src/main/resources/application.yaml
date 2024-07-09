@@ -1,0 +1,14 @@
+server:
+  port: 8111
+  servlet:
+    context-path: /
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/learn?serverTimezone=UTC&useSSL=true&useUnicode=true&characterEncoding=UTF-8&nullNamePatternMatchesAll=true&allowMultiQueries=true
+    url: jdbc:mysql://localhost:3306/weixin_test?useSSL=false&serverTimezone=UTC
+    username: root
+    password: hyflearn
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true

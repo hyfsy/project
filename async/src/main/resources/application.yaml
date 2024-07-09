@@ -1,0 +1,6 @@
+feizhu:
+  async-task:
+    alarm:
+      api: https://open.feishu.cn/open-apis/bot/v2/hook/8a50a120-7535-4064-84dd-9accdff8aa81
+      appId: cli_a22d5bd33e39500b
+      appSecret: uQh0D8mTEXfvJt7SCNUSSemyxzFl77f7

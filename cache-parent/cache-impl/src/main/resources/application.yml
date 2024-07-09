@@ -1,0 +1,50 @@
+server:
+  servlet:
+    context-path: /
+  port: 8082
+spring:
+  application:
+    name: test-application-name
+    tenant: test-tenant-name
+  redis:
+    database: 2
+    host: 192.168.190.188
+    port: 6379
+    username:
+    password:
+  hyf:
+    cache:
+      enabled: true
+      redis:
+        enabled: true
+      caffeine:
+        enabled: true
+#        initialCapacity: 100
+#        expireAfterAccess: 1d
+#        refreshAfterWrite: 1d
+#        removal-listener: CaffeineRemovalListener
+#        eviction-listener: CaffeineEvicationListener
+#        maximumSize: 100
+#        maximumWeight: 100
+#        recordStats: true
+#        recordStatsCounter: CaffeineRecordStatsCounter
+#        weakKeys: true
+#        weakValues: true
+#        softValues: true
+#        weigher: CaffeineWeigher
+#        scheduler: CaffeineScheduler
+#        ticker: CaffeineTicker
+#        executor: CaffeineExecutor
+#        async: false
+
+  cache:
+    redis:
+      time-to-live: 1d
+      cache-null-values: true
+      use-key-prefix: true
+      key-prefix: "xxx"
+      enable-statistics: true
+
+
+
+

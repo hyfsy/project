@@ -1,0 +1,11 @@
+server:
+  port: 5411
+spring:
+  application:
+    name: ddos-provider
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+#        server-addr: 192.168.112.39:8848
+        server-addr: 127.0.0.1:8848
