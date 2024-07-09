@@ -14,6 +14,7 @@
 package com.hyf.proxyserver;
 
 import com.hyf.proxyserver.server.ProxyServerInitializer;
+
 import com.hyf.proxyserver.server.ssl.cert.SelfSignedCertificateManager;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.EventLoopGroup;
@@ -29,10 +30,6 @@ import java.security.cert.CertificateException;
  *     https://wiyi.org/socks5-protocol-in-deep.html
  *     https://blog.csdn.net/rpsate/article/details/131769396
  *     https://www.openwrt.pro/post-93.html
- *
- *     https://www.openwrt.pro/post-93.html
- *     https://bbs.itzmx.com/thread-7661-1-1.html
- *     https://blog.51cto.com/u_15127700/2847474
  * </pre>
  */
 public final class SocksServer {

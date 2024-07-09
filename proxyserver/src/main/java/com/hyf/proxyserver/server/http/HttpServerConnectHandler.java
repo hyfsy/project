@@ -130,7 +130,6 @@ public final class HttpServerConnectHandler extends ChannelInboundHandlerAdapter
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
         ProxyUtils.closeOnFlush(ctx.channel());
     }
 

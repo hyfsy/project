@@ -142,7 +142,6 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
         ProxyUtils.closeOnFlush(ctx.channel());
     }
 }

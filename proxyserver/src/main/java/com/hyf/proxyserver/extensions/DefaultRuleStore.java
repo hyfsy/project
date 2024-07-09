@@ -36,6 +36,7 @@ public class DefaultRuleStore implements DefaultTrafficFilter.RuleStore {
                     if (row.trim().isEmpty()) continue;
                     String[] items = row.split(";");
                     if (items.length < 3) {
+                        // continue;
                         throw new RuntimeException("config format error");
                     }
                     boolean block = "".equals(items[0]) || "true".equals(items[0]);
@@ -57,10 +58,7 @@ public class DefaultRuleStore implements DefaultTrafficFilter.RuleStore {
                 rules.set(Collections.emptyList());
             }
         };
-        try {
-            startWatch(filePath, callback);
-        } catch (IOException e) {
-        }
+        startWatch(filePath, callback);
     }
 
     @Override
@@ -68,11 +66,18 @@ public class DefaultRuleStore implements DefaultTrafficFilter.RuleStore {
         return rules.get();
     }
 
-    private void startWatch(String filePath, Callback callback) throws IOException {
-        Path watchFile = prepareFile(filePath).toPath();
-        Path watchDirectory = watchFile.getParent(); // 仅能监视目录
-        WatchService watchService = FileSystems.getDefault().newWatchService();
-        watchDirectory.register(watchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
+    private void startWatch(String filePath, Callback callback) {
+        Path watchFile;
+        Path watchDirectory;
+        WatchService watchService;
+        try {
+            watchFile = prepareFile(filePath).toPath();
+            watchDirectory = watchFile.getParent(); // 仅能监视目录
+            watchService = FileSystems.getDefault().newWatchService();
+            watchDirectory.register(watchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         AtomicBoolean stopped = new AtomicBoolean(false);
         Thread t = new Thread(() -> {
