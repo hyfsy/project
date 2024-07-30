@@ -1,6 +1,6 @@
 package com.hyf.proxyserver.server.ssl;
 
-import com.hyf.proxyserver.server.ProxyUtils;
+import com.hyf.proxyserver.server.util.ProxyUtils;
 import com.hyf.proxyserver.server.ssl.cert.SelfSignedCertificateManager;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ssl.SslContext;

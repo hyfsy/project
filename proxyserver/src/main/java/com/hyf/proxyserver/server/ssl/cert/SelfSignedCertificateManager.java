@@ -1,8 +1,7 @@
 package com.hyf.proxyserver.server.ssl.cert;
 
-import com.hyf.proxyserver.server.ProxyUtils;
+import com.hyf.proxyserver.server.util.ProxyUtils;
 import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.util.internal.SystemPropertyUtil;
 
 import java.io.*;

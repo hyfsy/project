@@ -9,7 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.*;
 
-import com.hyf.proxyserver.server.*;
+import com.hyf.proxyserver.server.capturer.TrafficCapturer;
+import com.hyf.proxyserver.server.util.ProxyUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelId;
@@ -42,13 +43,16 @@ public final class FileDumpTrafficCapturer implements TrafficCapturer {
     }
 
     @Override
-    public boolean filter(Channel inboundChannel, Channel outboundChannel, ByteBuf msg, boolean fromClient) {
+    public boolean accept(Channel inboundChannel, Channel outboundChannel, Object msg, boolean fromClient) {
         return trafficFilter.filter(inboundChannel, outboundChannel, msg, fromClient);
     }
 
     @Override
-    public ByteBuf capture(Channel inboundChannel, Channel outboundChannel, ByteBuf msg, boolean fromClient) {
-        dumpToFile(inboundChannel, outboundChannel, msg, fromClient);
+    public Object capture(Channel inboundChannel, Channel outboundChannel, Object msg, boolean fromClient) {
+        if (!(msg instanceof ByteBuf)) {
+            return msg;
+        }
+        dumpToFile(inboundChannel, outboundChannel, (ByteBuf) msg, fromClient);
         return msg;
     }
 

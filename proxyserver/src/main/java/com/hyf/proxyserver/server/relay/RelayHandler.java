@@ -11,8 +11,9 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.hyf.proxyserver.server;
+package com.hyf.proxyserver.server.relay;
 
+import com.hyf.proxyserver.server.util.ProxyUtils;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;

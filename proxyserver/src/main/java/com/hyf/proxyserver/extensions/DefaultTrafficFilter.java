@@ -1,6 +1,5 @@
 package com.hyf.proxyserver.extensions;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
 import java.net.InetSocketAddress;
@@ -15,7 +14,7 @@ public class DefaultTrafficFilter implements TrafficFilter {
     }
 
     @Override
-    public boolean filter(Channel inboundChannel, Channel outboundChannel, ByteBuf msg, boolean fromClient) {
+    public boolean filter(Channel inboundChannel, Channel outboundChannel, Object msg, boolean fromClient) {
 
         InetSocketAddress addr;
         if (fromClient) {

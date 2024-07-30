@@ -1,6 +1,6 @@
 package com.hyf.proxyserver.extensions;
 
-import com.hyf.proxyserver.server.ProxyUtils;
+import com.hyf.proxyserver.server.util.ProxyUtils;
 
 import java.io.*;
 import java.nio.file.*;

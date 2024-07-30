@@ -1,6 +1,6 @@
 package com.hyf.proxyserver;
 
-import com.hyf.proxyserver.server.ProxyUtils;
+import com.hyf.proxyserver.server.util.ProxyUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -10,8 +10,9 @@ public class MitmClientTests {
 
     public static void main(String[] args) {
         MitmClientConfig mitmClientConfig = new MitmClientConfig();
-        // mitmClientConfig.setProxyEnabled(true);
-        // mitmClientConfig.setProxyType(Proxy.Type.HTTP);
+        mitmClientConfig.setProxyEnabled(true);
+        mitmClientConfig.setProxyType(Proxy.Type.HTTP);
+        mitmClientConfig.setProxyPort(8088);
         MitmClient mitmClient = new MitmClient(mitmClientConfig);
         mitmClient.start(new MitmClient.ResponseHandler() {
             @Override

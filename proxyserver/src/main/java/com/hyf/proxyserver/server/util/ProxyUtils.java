@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.hyf.proxyserver.server;
+package com.hyf.proxyserver.server.util;
 
 import java.io.File;
 import java.net.InetSocketAddress;
@@ -52,6 +52,10 @@ public final class ProxyUtils {
     }
 
     public static ByteBuf toByteBuf(String content) {
-        return Unpooled.copiedBuffer(content.getBytes(StandardCharsets.UTF_8));
+        return toByteBuf(content.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static ByteBuf toByteBuf(byte[] bytes) {
+        return Unpooled.copiedBuffer(bytes);
     }
 }

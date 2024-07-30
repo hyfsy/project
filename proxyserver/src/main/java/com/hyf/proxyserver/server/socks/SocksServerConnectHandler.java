@@ -13,10 +13,9 @@
 
 package com.hyf.proxyserver.server.socks;
 
-import com.hyf.proxyserver.server.ProxyUtils;
+import com.hyf.proxyserver.server.util.ProxyUtils;
 import com.hyf.proxyserver.server.DirectClientHandler;
-import com.hyf.proxyserver.server.ProxyServerInitializer;
-import com.hyf.proxyserver.server.RelayChannelInitializers;
+import com.hyf.proxyserver.server.relay.RelayChannelInitializers;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.socket.nio.NioSocketChannel;

@@ -1,11 +1,11 @@
 
-package com.hyf.proxyserver.server;
+package com.hyf.proxyserver.server.relay;
 
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import io.netty.buffer.ByteBuf;
+import com.hyf.proxyserver.server.capturer.TrafficCapturer;
 import io.netty.channel.Channel;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
@@ -23,18 +23,12 @@ public final class Intermediary {
     /* package */
     static Object capture(Channel inboundChannel, Channel outboundChannel, Object msg,
                           boolean fromClient) {
-        if (!(msg instanceof ByteBuf)) {
-            LOG.warn("ignored message: " + msg.getClass().getName());
-            return msg;
-        }
-        ByteBuf byteBuf = (ByteBuf) msg;
-
         for (TrafficCapturer listener : listeners) {
-            if (listener.filter(inboundChannel, outboundChannel, byteBuf, fromClient)) {
-                byteBuf = listener.capture(inboundChannel, outboundChannel, byteBuf, fromClient);
+            if (listener.accept(inboundChannel, outboundChannel, msg, fromClient)) {
+                msg = listener.capture(inboundChannel, outboundChannel, msg, fromClient);
             }
         }
-        return byteBuf;
+        return msg;
     }
 
     public static void addListener(TrafficCapturer listener) {

@@ -14,9 +14,8 @@
 package com.hyf.proxyserver.server.http;
 
 import com.hyf.proxyserver.server.DirectClientHandler;
-import com.hyf.proxyserver.server.ProxyServerInitializer;
-import com.hyf.proxyserver.server.ProxyUtils;
-import com.hyf.proxyserver.server.RelayChannelInitializers;
+import com.hyf.proxyserver.server.util.ProxyUtils;
+import com.hyf.proxyserver.server.relay.RelayChannelInitializers;
 import com.hyf.proxyserver.server.ssl.SslUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;

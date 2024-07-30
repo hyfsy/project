@@ -1,4 +1,4 @@
-package com.hyf.proxyserver.server;
+package com.hyf.proxyserver.server.relay;
 
 import io.netty.channel.Channel;
 
@@ -15,11 +15,14 @@ public class RelayChannelInitializers {
     }
 
     public static void initChannelRelay(Channel inboundChannel, Channel outboundChannel) {
+
+        // 此处可添加针对特定协议的编解码支持，如 http/websocket/h2/quic
+        initializers.forEach(i -> i.initChannelBeforeRelay(inboundChannel, outboundChannel));
+
         inboundChannel.pipeline().addLast(RelayHandler.class.getName(), new RelayHandler(outboundChannel));
         outboundChannel.pipeline().addLast(RelayHandler.class.getName(), new RelayHandler(inboundChannel));
 
-        // 此处可添加针对特定协议的编解码的功能
-        initializers.forEach(i -> i.initChannel(inboundChannel, outboundChannel));
+        initializers.forEach(i -> i.initChannelAfterRelay(inboundChannel, outboundChannel));
     }
 
     public static void addInitializer(RelayChannelInitializer initializer) {

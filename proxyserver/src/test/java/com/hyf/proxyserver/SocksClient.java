@@ -4,7 +4,7 @@ package com.hyf.proxyserver;
 import java.io.File;
 import java.net.InetSocketAddress;
 
-import com.hyf.proxyserver.server.ProxyUtils;
+import com.hyf.proxyserver.server.util.ProxyUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
