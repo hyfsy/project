@@ -16,6 +16,7 @@ package com.hyf.proxyserver.server.http;
 import com.hyf.proxyserver.server.DirectClientHandler;
 import com.hyf.proxyserver.server.ProxyServerInitializer;
 import com.hyf.proxyserver.server.ProxyUtils;
+import com.hyf.proxyserver.server.RelayChannelInitializers;
 import com.hyf.proxyserver.server.ssl.SslUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -93,7 +94,7 @@ public final class HttpServerConnectHandler extends ChannelInboundHandlerAdapter
                             if (SslUtils.useSsl(ctx)) {
                                 outboundChannel.pipeline().addLast(SslUtils.getSslHandlerName(), SslUtils.getClientSslContext().newHandler(ctx.alloc(), host, port));
                             }
-                            ProxyServerInitializer.INSTANCE.initChannelRelay(ctx.channel(), outboundChannel);
+                            RelayChannelInitializers.initChannelRelay(ctx.channel(), outboundChannel);
                         }
                     }).addListener(new ChannelFutureListener() {
                         @Override

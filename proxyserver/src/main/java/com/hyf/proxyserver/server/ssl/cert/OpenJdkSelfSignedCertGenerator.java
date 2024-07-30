@@ -24,7 +24,6 @@ import io.netty.util.internal.PlatformDependent;
 import io.netty.util.internal.SuppressJava6Requirement;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
-import sun.plugin.extension.ExtensionUtils;
 import sun.security.util.ObjectIdentifier;
 import sun.security.x509.*;
 

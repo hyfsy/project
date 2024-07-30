@@ -28,14 +28,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class ProxyServerInitializer extends ChannelInitializer<SocketChannel> {
 
-    public static final ProxyServerInitializer INSTANCE = new ProxyServerInitializer();
-
-    private static final List<RelayChannelInitializer> initializers = new CopyOnWriteArrayList<>();
-
-    static {
-        ServiceLoader.load(RelayChannelInitializer.class).forEach(initializers::add);
-    }
-
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
         // SocksPortUnificationServerHandler -> socks协议编解码选择
@@ -48,13 +40,5 @@ public final class ProxyServerInitializer extends ChannelInitializer<SocketChann
         ch.pipeline().addLast(new SniSupportOptionalSslHandler());
         ch.pipeline().addLast(new HttpProtocolUnificationServerHandler());
         ch.pipeline().addLast(HttpServerHandler.INSTANCE);
-    }
-
-    public void initChannelRelay(Channel inboundChannel, Channel outboundChannel) {
-        inboundChannel.pipeline().addLast(RelayHandler.class.getName(), new RelayHandler(outboundChannel));
-        outboundChannel.pipeline().addLast(RelayHandler.class.getName(), new RelayHandler(inboundChannel));
-
-        // 此处可添加针对特定协议的编解码的功能
-        initializers.forEach(i -> i.initChannel(inboundChannel, outboundChannel));
     }
 }

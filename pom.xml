@@ -10,12 +10,12 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>async</module>
-        <module>cache-parent</module>
-        <module>ddos-parent</module>
-        <module>elasticsearch-sync</module>
-        <module>exam</module>
-        <module>exam1</module>
-        <module>proxyserver</module>
+        <!-- <module>async</module> -->
+        <!-- <module>cache-parent</module> -->
+        <!-- <module>ddos-parent</module> -->
+        <!-- <module>elasticsearch-sync</module> -->
+        <!-- <module>exam</module> -->
+        <!-- <module>exam1</module> -->
+        <!-- <module>proxyserver</module> -->
     </modules>
 </project>

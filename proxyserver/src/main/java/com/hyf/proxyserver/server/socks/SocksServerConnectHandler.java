@@ -16,6 +16,7 @@ package com.hyf.proxyserver.server.socks;
 import com.hyf.proxyserver.server.ProxyUtils;
 import com.hyf.proxyserver.server.DirectClientHandler;
 import com.hyf.proxyserver.server.ProxyServerInitializer;
+import com.hyf.proxyserver.server.RelayChannelInitializers;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -57,7 +58,7 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
                                 ctx.pipeline().remove(SocksServerConnectHandler.this);
                                 ctx.pipeline().addLast(new SslAwareChannelHandler(outboundChannel, targetSocketAddress).prepareAssociation());
                                 outboundChannel.attr(ProxyUtils.TARGET_ADDRESS).setIfAbsent(targetSocketAddress);
-                                ProxyServerInitializer.INSTANCE.initChannelRelay(ctx.channel(), outboundChannel);
+                                RelayChannelInitializers.initChannelRelay(ctx.channel(), outboundChannel);
                             }
                         });
                     } else {
@@ -106,7 +107,7 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
                                 ctx.pipeline().remove(SocksServerConnectHandler.this);
                                 ctx.pipeline().addLast(new SslAwareChannelHandler(outboundChannel, targetSocketAddress).prepareAssociation());
                                 outboundChannel.attr(ProxyUtils.TARGET_ADDRESS).setIfAbsent(targetSocketAddress);
-                                ProxyServerInitializer.INSTANCE.initChannelRelay(ctx.channel(), outboundChannel);
+                                RelayChannelInitializers.initChannelRelay(ctx.channel(), outboundChannel);
                             }
                         });
                     } else {
