@@ -28,18 +28,20 @@ public final class FileDumpTrafficCapturer implements TrafficCapturer {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("traffic-dump", true));
 
-    static {
-        File dir = new File(DUMP_PATH);
+    private final File dumpDir;
+
+    public FileDumpTrafficCapturer() {
+        this(DUMP_PATH);
+    }
+
+    public FileDumpTrafficCapturer(String dumpDir) {
+        File dir = new File(dumpDir);
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
                 LOG.error("dump directory mkdirs failed: {}", dir.getAbsolutePath());
             }
         }
-    }
-
-    public static void main(String[] args) {
-        printDumpPath();
-        // clearDumpFiles();
+        this.dumpDir = dir;
     }
 
     @Override
@@ -64,17 +66,8 @@ public final class FileDumpTrafficCapturer implements TrafficCapturer {
         captureData.msg = ProxyUtils.getContent(buf);
         captureData.fromClient = fromClient;
         executor.execute(() -> {
-            String readableText = getAddressString(captureData.inboundAddress) + "__"
-                    + getAddressString(captureData.outboundAddress) + "__" + (captureData.fromClient ? "req" : "resp");
-            String yyyyMMdd = new SimpleDateFormat("yyyyMMdd").format(new Date());
-            String saveFilePath = DUMP_PATH + File.separator + yyyyMMdd + File.separator + captureData.inboundId.asLongText() + "___" + readableText;
-            File file = new File(saveFilePath);
-            if (!file.getParentFile().exists()) {
-                if (!file.getParentFile().mkdirs()) {
-                    LOG.error("dump directory mkdirs failed: {}", file.getParentFile().getAbsolutePath());
-                }
-            }
-            try (FileOutputStream fis = new FileOutputStream(file, true)) {
+            File dumpFile = getDumpFile(captureData);
+            try (FileOutputStream fis = new FileOutputStream(dumpFile, true)) {
                 fis.write(captureData.msg);
             } catch (IOException e) {
                 LOG.error("dump msg failed, channel: {}, buf: {}", captureData.inboundAddress, captureData.msg, e);
@@ -87,9 +80,21 @@ public final class FileDumpTrafficCapturer implements TrafficCapturer {
         return address.toString().replace("/", "").replace(":", "#");
     }
 
-    private static void clearDumpFiles() {
-        File dir = new File(DUMP_PATH);
-        File[] files = dir.listFiles();
+    private File getDumpFile(CaptureData captureData) {
+        String readableText = getAddressString(captureData.inboundAddress) + "__"
+                + getAddressString(captureData.outboundAddress) + "__" + (captureData.fromClient ? "req" : "resp");
+        String yyyyMMdd = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        File dumpFile = new File(dumpDir, yyyyMMdd + File.separator + captureData.inboundId.asLongText() + "___" + readableText);
+        if (!dumpFile.getParentFile().exists()) {
+            if (!dumpFile.getParentFile().mkdirs()) {
+                LOG.error("dump directory mkdirs failed: {}", dumpFile.getParentFile().getAbsolutePath());
+            }
+        }
+        return dumpFile;
+    }
+
+    public void clearDumpDir() {
+        File[] files = dumpDir.listFiles();
         if (files != null) {
             for (File file : files) {
                 if (!file.delete()) {
@@ -97,13 +102,13 @@ public final class FileDumpTrafficCapturer implements TrafficCapturer {
                 }
             }
         }
-        if (!new File(DUMP_PATH).delete()) {
+        if (!dumpDir.delete()) {
             throw new RuntimeException("delete dump dir failed: " + DUMP_PATH);
         }
     }
 
-    private static void printDumpPath() {
-        System.out.println(DUMP_PATH);
+    public void printDumpPath() {
+        LOG.info("dumpDir: {}", dumpDir.getAbsolutePath());
     }
 
     private static class CaptureData {

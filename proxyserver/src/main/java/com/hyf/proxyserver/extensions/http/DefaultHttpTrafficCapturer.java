@@ -51,21 +51,21 @@ public class DefaultHttpTrafficCapturer extends SimpleTrafficCapturer<FullHttpMe
         return msg;
     }
 
-    private Object captureClientRequest(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request) {
+    private FullHttpRequest captureClientRequest(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request) {
         return httpTrafficCapturer.captureClientRequest(inboundChannel, outboundChannel, request);
     }
 
     @Deprecated
-    private Object captureClientResponse(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request, FullHttpResponse response) {
+    private FullHttpResponse captureClientResponse(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request, FullHttpResponse response) {
         return httpTrafficCapturer.captureClientResponse(inboundChannel, outboundChannel, request, response);
     }
 
     @Deprecated
-    private Object captureRemoteRequest(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request) {
+    private FullHttpRequest captureRemoteRequest(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request) {
         return httpTrafficCapturer.captureRemoteRequest(inboundChannel, outboundChannel, request);
     }
 
-    private Object captureRemoteResponse(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request, FullHttpResponse response) {
+    private FullHttpResponse captureRemoteResponse(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request, FullHttpResponse response) {
         return httpTrafficCapturer.captureRemoteResponse(inboundChannel, outboundChannel, request, response);
     }
 }

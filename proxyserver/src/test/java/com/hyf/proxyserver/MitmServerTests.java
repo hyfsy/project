@@ -33,7 +33,7 @@ public class MitmServerTests {
         MitmServer mitmServer = new MitmServer(mitmServerConfig);
         ServerUtils.initSimpleHttpCapability(mitmServer, new HttpTrafficCapturer() {
             @Override
-            public Object captureRemoteResponse(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request, FullHttpResponse response) {
+            public FullHttpResponse captureRemoteResponse(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request, FullHttpResponse response) {
                 return response;
             }
         });
