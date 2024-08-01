@@ -10,7 +10,7 @@ import io.netty.handler.codec.http.*;
 
 public class MitmServerTests {
 
-    public static void main2(String[] args) {
+    public static void main(String[] args) {
         MitmServerConfig mitmServerConfig = new MitmServerConfig();
         mitmServerConfig.setPort(8088);
         MitmServer mitmServer = new MitmServer(mitmServerConfig);
@@ -24,10 +24,17 @@ public class MitmServerTests {
                 return msg;
             }
         });
+        // mitmServer.addCapturers(new ByteBufTrafficCapturer() {
+        //     @Override
+        //     protected ByteBuf captureByteBuf(Channel inboundChannel, Channel outboundChannel, ByteBuf msg, boolean fromClient) {
+        //         System.out.println(ProxyUtils.getContentString(msg));
+        //         return msg;
+        //     }
+        // });
         mitmServer.start();
     }
 
-    public static void main(String[] args) {
+    public static void main3(String[] args) {
         MitmServerConfig mitmServerConfig = new MitmServerConfig();
         mitmServerConfig.setPort(8088);
         MitmServer mitmServer = new MitmServer(mitmServerConfig);
