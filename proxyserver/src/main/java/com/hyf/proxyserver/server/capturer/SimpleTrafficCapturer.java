@@ -26,7 +26,7 @@ public abstract class SimpleTrafficCapturer<I> implements TrafficCapturer {
         return true;
     }
 
-    protected abstract Object capture0(Channel inboundChannel, Channel outboundChannel, I msg, boolean fromClient);
+    protected abstract I capture0(Channel inboundChannel, Channel outboundChannel, I msg, boolean fromClient);
 
     private boolean acceptInboundMessage(Object msg) {
         return matcher.match(msg);

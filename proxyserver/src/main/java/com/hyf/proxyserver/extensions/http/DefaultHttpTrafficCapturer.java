@@ -19,7 +19,7 @@ public class DefaultHttpTrafficCapturer extends SimpleTrafficCapturer<FullHttpMe
     }
 
     @Override
-    protected Object capture0(Channel inboundChannel, Channel outboundChannel, FullHttpMessage msg, boolean fromClient) {
+    protected FullHttpMessage capture0(Channel inboundChannel, Channel outboundChannel, FullHttpMessage msg, boolean fromClient) {
 
         boolean isRequest = msg instanceof HttpRequest;
         boolean isResponse = msg instanceof HttpResponse;
