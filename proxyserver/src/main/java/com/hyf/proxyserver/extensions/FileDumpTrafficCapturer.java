@@ -20,7 +20,7 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 
 public final class FileDumpTrafficCapturer implements TrafficCapturer {
 
-    public static final String DUMP_PATH = ProxyUtils.HOME + File.separator + "proxy-listen-data";
+    public static final String DEFAULT_DUMP_PATH = ProxyUtils.HOME + File.separator + "proxy-listen-data";
 
     private static final InternalLogger LOG = InternalLoggerFactory.getInstance(FileDumpTrafficCapturer.class);
 
@@ -31,7 +31,7 @@ public final class FileDumpTrafficCapturer implements TrafficCapturer {
     private final File dumpDir;
 
     public FileDumpTrafficCapturer() {
-        this(DUMP_PATH);
+        this(DEFAULT_DUMP_PATH);
     }
 
     public FileDumpTrafficCapturer(String dumpDir) {
@@ -103,7 +103,7 @@ public final class FileDumpTrafficCapturer implements TrafficCapturer {
             }
         }
         if (!dumpDir.delete()) {
-            throw new RuntimeException("delete dump dir failed: " + DUMP_PATH);
+            throw new RuntimeException("delete dump dir failed: " + DEFAULT_DUMP_PATH);
         }
     }
 
