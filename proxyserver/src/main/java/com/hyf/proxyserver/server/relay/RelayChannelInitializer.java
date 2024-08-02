@@ -19,6 +19,7 @@ public interface RelayChannelInitializer {
      * @param inboundChannel  客户端到代理服务器的通道
      * @param outboundChannel 代理服务器到目标端的通道
      */
+    @Deprecated
     default void initChannelAfterRelay(Channel inboundChannel, Channel outboundChannel) {
     }
 }
