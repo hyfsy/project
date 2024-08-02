@@ -30,13 +30,13 @@ public class DefaultHttpTrafficCapturer extends SimpleTrafficCapturer<FullHttpMe
         boolean isResponse = msg instanceof FullHttpResponse;
 
         if (isRequest) {
-            // 方便服务端响应处理时可获取
             FullHttpRequest request = (FullHttpRequest) msg;
             if (fromClient) {
                 request = captureClientRequest(inboundChannel, outboundChannel, request);
             } else {
                 request = captureRemoteRequest(inboundChannel, outboundChannel, request);
             }
+            // 方便服务端响应处理时可获取
             pushRequest(inboundChannel, request.copy());
             return request;
         }
