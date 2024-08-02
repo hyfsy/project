@@ -5,17 +5,17 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.*;
 import io.netty.util.AttributeKey;
 
-import java.util.List;
 import java.util.Queue;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DefaultHttpTrafficCapturer extends SimpleTrafficCapturer<FullHttpMessage> {
 
     /**
-     * 请求数据对象
+     * 请求数据对象队列，每个capturer不一样的key，防止冲突
      */
-    private static final AttributeKey<Queue<RequestData>> REQUEST_DATA_QUEUE = AttributeKey.valueOf("REQUEST_DATA");
+    private final AttributeKey<Queue<RequestData>> requestDataQueueAttributeKey = AttributeKey.valueOf("REQUEST_DATA_" + UUID.randomUUID());
 
     private final HttpTrafficCapturer[] httpTrafficCapturers;
 
@@ -88,7 +88,7 @@ public class DefaultHttpTrafficCapturer extends SimpleTrafficCapturer<FullHttpMe
     }
 
     private RequestData popRequest(Channel channel) {
-        Queue<RequestData> requestDataQueue = channel.attr(REQUEST_DATA_QUEUE).get();
+        Queue<RequestData> requestDataQueue = channel.attr(this.requestDataQueueAttributeKey).get();
         if (requestDataQueue == null) {
             throw new IllegalStateException("request is null");
         }
@@ -100,11 +100,11 @@ public class DefaultHttpTrafficCapturer extends SimpleTrafficCapturer<FullHttpMe
     }
 
     private void pushRequest(Channel channel, FullHttpRequest request) {
-        Queue<RequestData> requestDataQueue = channel.attr(REQUEST_DATA_QUEUE).get();
+        Queue<RequestData> requestDataQueue = channel.attr(this.requestDataQueueAttributeKey).get();
         if (requestDataQueue == null) {
             Queue<RequestData> queue = new LinkedBlockingQueue<>();
-            channel.attr(REQUEST_DATA_QUEUE).setIfAbsent(queue);
-            requestDataQueue = channel.attr(REQUEST_DATA_QUEUE).get();
+            channel.attr(this.requestDataQueueAttributeKey).setIfAbsent(queue);
+            requestDataQueue = channel.attr(this.requestDataQueueAttributeKey).get();
         }
         requestDataQueue.add(new RequestData(request));
     }
