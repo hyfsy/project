@@ -1,13 +1,11 @@
 package com.hyf.proxyserver.server.capturer;
 
 import com.hyf.proxyserver.server.relay.RelayContext;
-import io.netty.channel.Channel;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.internal.TypeParameterMatcher;
 
-public abstract class SimpleTrafficCapturer<I> implements TrafficCapturer {
+public abstract class SimpleTrafficListener<I> implements TrafficListener {
 
-    private final TypeParameterMatcher matcher = TypeParameterMatcher.find(this, SimpleTrafficCapturer.class, "I");
+    private final TypeParameterMatcher matcher = TypeParameterMatcher.find(this, SimpleTrafficListener.class, "I");
 
     @Override
     public boolean accept(RelayContext<?> context) {
@@ -17,7 +15,7 @@ public abstract class SimpleTrafficCapturer<I> implements TrafficCapturer {
     }
 
     @Override
-    public void capture(RelayContext<?> context) {
+    public void listen(RelayContext<?> context) {
         @SuppressWarnings("unchecked")
         RelayContext<I> icontext = (RelayContext<I>) context;
         accept0(icontext);

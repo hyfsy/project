@@ -1,23 +1,11 @@
 package com.hyf.proxyserver;
 
-import com.hyf.proxyserver.extensions.http.HttpTrafficCapturer;
-import com.hyf.proxyserver.server.capturer.ByteBufTrafficCapturer;
-import com.hyf.proxyserver.server.capturer.TrafficCapturer;
+import com.hyf.proxyserver.extensions.http.HttpTrafficListener;
 import com.hyf.proxyserver.server.relay.RelayContext;
-import com.hyf.proxyserver.server.ssl.cert.CustomSelfSignedCertificate;
-import com.hyf.proxyserver.server.ssl.cert.SelfSignedCertificateManager;
-import com.hyf.proxyserver.server.util.ProxyUtils;
 import com.hyf.proxyserver.server.util.ServerUtils;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.ssl.util.SelfSignedCertificate;
-import io.netty.util.AsciiString;
 
 import java.io.*;
-import java.math.BigInteger;
-import java.security.PrivateKey;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
@@ -46,14 +34,14 @@ public class MobileMitmServerTests {
         //         return msg;
         //     }
         // });
-        ServerUtils.initSimpleHttpCapability(mitmServer, new HttpTrafficCapturer() {
+        ServerUtils.initSimpleHttpCapability(mitmServer, new HttpTrafficListener() {
             @Override
-            public void captureClientRequest(RelayContext<FullHttpRequest> context, FullHttpRequest request) {
+            public void listenClientRequest(RelayContext<FullHttpRequest> context, FullHttpRequest request) {
                 System.out.println(request);
             }
 
             @Override
-            public void captureRemoteResponse(RelayContext<FullHttpResponse> context, FullHttpRequest request, FullHttpResponse response) {
+            public void listenRemoteResponse(RelayContext<FullHttpResponse> context, FullHttpRequest request, FullHttpResponse response) {
                 System.out.println(response);
             }
         });

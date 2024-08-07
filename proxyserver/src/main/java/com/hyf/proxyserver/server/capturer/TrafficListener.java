@@ -3,7 +3,7 @@ package com.hyf.proxyserver.server.capturer;
 
 import com.hyf.proxyserver.server.relay.RelayContext;
 
-public interface TrafficCapturer {
+public interface TrafficListener {
 
     /**
      * 过滤包
@@ -20,6 +20,6 @@ public interface TrafficCapturer {
      *
      * @param context 中继上下文
      */
-    void capture(RelayContext<?> context);
+    void listen(RelayContext<?> context);
 
 }

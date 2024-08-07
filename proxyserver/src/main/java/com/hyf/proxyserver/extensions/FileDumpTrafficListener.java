@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.*;
 
-import com.hyf.proxyserver.server.capturer.TrafficCapturer;
+import com.hyf.proxyserver.server.capturer.TrafficListener;
 import com.hyf.proxyserver.server.relay.RelayContext;
 import com.hyf.proxyserver.server.util.ProxyUtils;
 import io.netty.buffer.ByteBuf;
@@ -19,11 +19,11 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
-public final class FileDumpTrafficCapturer implements TrafficCapturer {
+public final class FileDumpTrafficListener implements TrafficListener {
 
     public static final String DEFAULT_DUMP_PATH = ProxyUtils.HOME + File.separator + "proxy-listen-data";
 
-    private static final InternalLogger LOG = InternalLoggerFactory.getInstance(FileDumpTrafficCapturer.class);
+    private static final InternalLogger LOG = InternalLoggerFactory.getInstance(FileDumpTrafficListener.class);
 
     private final TrafficFilter trafficFilter = new DefaultTrafficFilter(new DefaultRuleStore());
 
@@ -31,11 +31,11 @@ public final class FileDumpTrafficCapturer implements TrafficCapturer {
 
     private final File dumpDir;
 
-    public FileDumpTrafficCapturer() {
+    public FileDumpTrafficListener() {
         this(DEFAULT_DUMP_PATH);
     }
 
-    public FileDumpTrafficCapturer(String dumpDir) {
+    public FileDumpTrafficListener(String dumpDir) {
         File dir = new File(dumpDir);
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
@@ -51,7 +51,7 @@ public final class FileDumpTrafficCapturer implements TrafficCapturer {
     }
 
     @Override
-    public void capture(RelayContext<?> context) {
+    public void listen(RelayContext<?> context) {
         Object msg = context.getRelayMsg();
         if (!(msg instanceof ByteBuf)) {
             return;

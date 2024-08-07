@@ -1,7 +1,7 @@
 package com.hyf.proxyserver;
 
 import com.hyf.proxyserver.server.*;
-import com.hyf.proxyserver.server.capturer.TrafficCapturer;
+import com.hyf.proxyserver.server.capturer.TrafficListener;
 import com.hyf.proxyserver.server.relay.Intermediary;
 import com.hyf.proxyserver.server.relay.RelayChannelInitializer;
 import com.hyf.proxyserver.server.relay.RelayChannelInitializers;
@@ -47,15 +47,15 @@ public class MitmServer {
         }
     }
 
-    public void addCapturers(TrafficCapturer... trafficCapturers) {
-        for (TrafficCapturer trafficCapturer : trafficCapturers) {
-            Intermediary.addListener(trafficCapturer);
+    public void addListeners(TrafficListener... trafficListeners) {
+        for (TrafficListener trafficListener : trafficListeners) {
+            Intermediary.addListener(trafficListener);
         }
     }
 
-    public void removeCapturers(TrafficCapturer... trafficCapturers) {
-        for (TrafficCapturer trafficCapturer : trafficCapturers) {
-            Intermediary.removeListener(trafficCapturer);
+    public void removeListeners(TrafficListener... trafficListeners) {
+        for (TrafficListener trafficListener : trafficListeners) {
+            Intermediary.removeListener(trafficListener);
         }
     }
 

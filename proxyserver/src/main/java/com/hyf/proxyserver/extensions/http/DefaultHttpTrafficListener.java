@@ -1,6 +1,6 @@
 package com.hyf.proxyserver.extensions.http;
 
-import com.hyf.proxyserver.server.capturer.SimpleTrafficCapturer;
+import com.hyf.proxyserver.server.capturer.SimpleTrafficListener;
 import com.hyf.proxyserver.server.relay.RelayContext;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.*;
@@ -11,17 +11,17 @@ import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class DefaultHttpTrafficCapturer extends SimpleTrafficCapturer<FullHttpMessage> {
+public class DefaultHttpTrafficListener extends SimpleTrafficListener<FullHttpMessage> {
 
     /**
      * 请求数据对象队列，每个capturer不一样的key，防止冲突
      */
     private final AttributeKey<Queue<RequestData>> requestDataQueueAttributeKey = AttributeKey.valueOf("REQUEST_DATA_" + UUID.randomUUID());
 
-    private final HttpTrafficCapturer[] httpTrafficCapturers;
+    private final HttpTrafficListener[] httpTrafficListeners;
 
-    public DefaultHttpTrafficCapturer(HttpTrafficCapturer... httpTrafficCapturers) {
-        this.httpTrafficCapturers = httpTrafficCapturers;
+    public DefaultHttpTrafficListener(HttpTrafficListener... httpTrafficListeners) {
+        this.httpTrafficListeners = httpTrafficListeners;
     }
 
     @Override
@@ -38,9 +38,10 @@ public class DefaultHttpTrafficCapturer extends SimpleTrafficCapturer<FullHttpMe
         if (isRequest) {
             FullHttpRequest request = (FullHttpRequest) msg;
             if (fromClient) {
-                captureClientRequest((RelayContext) context, request);
+                listenClientRequest((RelayContext) context, request);
             } else {
-                captureRemoteRequest((RelayContext) context, request);
+                // listenRemoteRequest((RelayContext) context, request);
+                throw new IllegalStateException("Can't happen");
             }
             request = (FullHttpRequest) context.getRelayMsg();
             // 方便服务端响应处理时可获取
@@ -52,9 +53,10 @@ public class DefaultHttpTrafficCapturer extends SimpleTrafficCapturer<FullHttpMe
             RequestData requestData = popRequest(outboundChannel);
             try {
                 if (fromClient) {
-                    captureClientResponse((RelayContext) context, requestData.request, response);
+                    // listenClientResponse((RelayContext) context, requestData.request, response);
+                    throw new IllegalStateException("Can't happen");
                 } else {
-                    captureRemoteResponse((RelayContext) context, requestData.request, response);
+                    listenRemoteResponse((RelayContext) context, requestData.request, response);
                 }
             } finally {
                 requestData.release();
@@ -62,29 +64,29 @@ public class DefaultHttpTrafficCapturer extends SimpleTrafficCapturer<FullHttpMe
         }
     }
 
-    private void captureClientRequest(RelayContext<FullHttpRequest> context, FullHttpRequest request) {
-        for (HttpTrafficCapturer httpTrafficCapturer : httpTrafficCapturers) {
-            httpTrafficCapturer.captureClientRequest(context, request);
+    private void listenClientRequest(RelayContext<FullHttpRequest> context, FullHttpRequest request) {
+        for (HttpTrafficListener httpTrafficListener : httpTrafficListeners) {
+            httpTrafficListener.listenClientRequest(context, request);
         }
     }
 
-    @Deprecated
-    private void captureClientResponse(RelayContext<FullHttpResponse> context, FullHttpRequest request, FullHttpResponse response) {
-        for (HttpTrafficCapturer httpTrafficCapturer : httpTrafficCapturers) {
-            httpTrafficCapturer.captureClientResponse(context, request, response);
-        }
-    }
+    // @Deprecated
+    // private void listenClientResponse(RelayContext<FullHttpResponse> context, FullHttpRequest request, FullHttpResponse response) {
+    //     for (HttpTrafficListener httpTrafficListener : httpTrafficListeners) {
+    //         httpTrafficListener.listenClientResponse(context, request, response);
+    //     }
+    // }
+    //
+    // @Deprecated
+    // private void listenRemoteRequest(RelayContext<FullHttpRequest> context, FullHttpRequest request) {
+    //     for (HttpTrafficListener httpTrafficListener : httpTrafficListeners) {
+    //         httpTrafficListener.listenRemoteRequest(context, request);
+    //     }
+    // }
 
-    @Deprecated
-    private void captureRemoteRequest(RelayContext<FullHttpRequest> context, FullHttpRequest request) {
-        for (HttpTrafficCapturer httpTrafficCapturer : httpTrafficCapturers) {
-            httpTrafficCapturer.captureRemoteRequest(context, request);
-        }
-    }
-
-    private void captureRemoteResponse(RelayContext<FullHttpResponse> context, FullHttpRequest request, FullHttpResponse response) {
-        for (HttpTrafficCapturer httpTrafficCapturer : httpTrafficCapturers) {
-            httpTrafficCapturer.captureRemoteResponse(context, request, response);
+    private void listenRemoteResponse(RelayContext<FullHttpResponse> context, FullHttpRequest request, FullHttpResponse response) {
+        for (HttpTrafficListener httpTrafficListener : httpTrafficListeners) {
+            httpTrafficListener.listenRemoteResponse(context, request, response);
         }
     }
 

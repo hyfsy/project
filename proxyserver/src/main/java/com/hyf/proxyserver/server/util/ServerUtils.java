@@ -1,19 +1,19 @@
 package com.hyf.proxyserver.server.util;
 
 import com.hyf.proxyserver.MitmServer;
-import com.hyf.proxyserver.extensions.FileDumpTrafficCapturer;
-import com.hyf.proxyserver.extensions.http.DefaultHttpTrafficCapturer;
+import com.hyf.proxyserver.extensions.FileDumpTrafficListener;
+import com.hyf.proxyserver.extensions.http.DefaultHttpTrafficListener;
 import com.hyf.proxyserver.extensions.http.DefaultHttpRelayChannelInitializer;
-import com.hyf.proxyserver.extensions.http.HttpTrafficCapturer;
+import com.hyf.proxyserver.extensions.http.HttpTrafficListener;
 
 public class ServerUtils {
 
-    public static void initSimpleHttpCapability(MitmServer mitmServer, HttpTrafficCapturer... httpTrafficCapturers) {
+    public static void initSimpleHttpCapability(MitmServer mitmServer, HttpTrafficListener... httpTrafficListeners) {
         mitmServer.addChannelInitializer(new DefaultHttpRelayChannelInitializer());
-        mitmServer.addCapturers(new DefaultHttpTrafficCapturer(httpTrafficCapturers));
+        mitmServer.addListeners(new DefaultHttpTrafficListener(httpTrafficListeners));
     }
 
     public static void initFileDumpCapability(MitmServer mitmServer) {
-        mitmServer.addCapturers(new FileDumpTrafficCapturer());
+        mitmServer.addListeners(new FileDumpTrafficListener());
     }
 }

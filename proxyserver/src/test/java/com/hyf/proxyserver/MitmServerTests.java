@@ -1,25 +1,19 @@
 package com.hyf.proxyserver;
 
-import com.hyf.proxyserver.extensions.http.CaCertificateDownloadChannelHandler;
-import com.hyf.proxyserver.extensions.http.HttpTrafficCapturer;
+import com.hyf.proxyserver.extensions.http.HttpTrafficListener;
 import com.hyf.proxyserver.server.capturer.*;
-import com.hyf.proxyserver.server.http.HttpUtils;
 import com.hyf.proxyserver.server.relay.RelayChannelInitializer;
 import com.hyf.proxyserver.server.relay.RelayContext;
 import com.hyf.proxyserver.server.ssl.cert.SelfSignedCertificateManager;
-import com.hyf.proxyserver.server.util.HttpCodecUtils;
 import com.hyf.proxyserver.server.util.ProxyUtils;
 import com.hyf.proxyserver.server.util.ServerUtils;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
 import io.netty.util.AsciiString;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class MitmServerTests {
@@ -62,9 +56,9 @@ public class MitmServerTests {
                 });
             }
         });
-        mitmServer.addCapturers(new TrafficCapturer() {
+        mitmServer.addListeners(new TrafficListener() {
             @Override
-            public void capture(RelayContext<?> context) {
+            public void listen(RelayContext<?> context) {
                 Object msg = context.getRelayMsg();
                 if (!(msg instanceof ByteBuf)) {
                     return;
@@ -100,14 +94,14 @@ public class MitmServerTests {
         MitmServerConfig mitmServerConfig = new MitmServerConfig();
         mitmServerConfig.setPort(8088);
         MitmServer mitmServer = new MitmServer(mitmServerConfig);
-        ServerUtils.initSimpleHttpCapability(mitmServer, new HttpTrafficCapturer() {
+        ServerUtils.initSimpleHttpCapability(mitmServer, new HttpTrafficListener() {
 
             @Override
-            public void captureClientRequest(RelayContext<FullHttpRequest> context, FullHttpRequest request) {
+            public void listenClientRequest(RelayContext<FullHttpRequest> context, FullHttpRequest request) {
             }
 
             @Override
-            public void captureRemoteResponse(RelayContext<FullHttpResponse> context, FullHttpRequest request, FullHttpResponse response) {
+            public void listenRemoteResponse(RelayContext<FullHttpResponse> context, FullHttpRequest request, FullHttpResponse response) {
                 System.out.println("================================================================");
                 System.out.println(request);
                 System.out.println(response);
