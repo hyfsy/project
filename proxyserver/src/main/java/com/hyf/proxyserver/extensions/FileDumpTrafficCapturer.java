@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.concurrent.*;
 
 import com.hyf.proxyserver.server.capturer.TrafficCapturer;
+import com.hyf.proxyserver.server.relay.RelayContext;
 import com.hyf.proxyserver.server.util.ProxyUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -45,17 +46,17 @@ public final class FileDumpTrafficCapturer implements TrafficCapturer {
     }
 
     @Override
-    public boolean accept(Channel inboundChannel, Channel outboundChannel, Object msg, boolean fromClient) {
-        return trafficFilter.filter(inboundChannel, outboundChannel, msg, fromClient);
+    public boolean accept(RelayContext<?> context) {
+        return trafficFilter.filter(context.getInboundChannel(), context.getOutboundChannel(), context.getRelayMsg(), context.fromClient());
     }
 
     @Override
-    public Object capture(Channel inboundChannel, Channel outboundChannel, Object msg, boolean fromClient) {
+    public void capture(RelayContext<?> context) {
+        Object msg = context.getRelayMsg();
         if (!(msg instanceof ByteBuf)) {
-            return msg;
+            return;
         }
-        dumpToFile(inboundChannel, outboundChannel, (ByteBuf) msg, fromClient);
-        return msg;
+        dumpToFile(context.getInboundChannel(), context.getOutboundChannel(), (ByteBuf) msg, context.fromClient());
     }
 
     private void dumpToFile(Channel inboundChannel, Channel outboundChannel, ByteBuf buf, boolean fromClient) {

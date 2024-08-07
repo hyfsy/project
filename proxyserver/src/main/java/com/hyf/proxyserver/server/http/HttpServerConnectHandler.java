@@ -84,6 +84,7 @@ public final class HttpServerConnectHandler extends ChannelInboundHandlerAdapter
                     responseFuture.addListener(new ChannelFutureListener() {
                         @Override
                         public void operationComplete(ChannelFuture channelFuture) {
+                            // TODO 报错 NoSuchElementException
                             ctx.pipeline().remove(HttpServerConnectHandler.this);
                             // 仅第一次需要解码获取host用，之后有需要可在RelayHandler后添加
                             ctx.pipeline().remove(HttpRequestDecoder.class.getName());
@@ -113,8 +114,13 @@ public final class HttpServerConnectHandler extends ChannelInboundHandlerAdapter
         });
 
         final Channel inboundChannel = ctx.channel();
-        b.group(inboundChannel.eventLoop()).channel(NioSocketChannel.class).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000).option(ChannelOption.SO_KEEPALIVE, true).handler(new DirectClientHandler(promise));
+        b.group(inboundChannel.eventLoop()) //
+                .channel(NioSocketChannel.class) //
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000) //
+                .option(ChannelOption.SO_KEEPALIVE, false) //
+                .handler(new DirectClientHandler(promise)); //
 
+        // TODO 连接管理，不要每次客户端请求都去建立连接，还不关
         b.connect(socketAddress).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
@@ -218,3 +224,43 @@ public final class HttpServerConnectHandler extends ChannelInboundHandlerAdapter
         }
     }
 }
+
+// 八月 06, 2024 3:25:13 下午 io.netty.util.concurrent.DefaultPromise notifyListener0
+//         警告: An exception was thrown by com.hyf.proxyserver.server.http.HttpServerConnectHandler$1$2.operationComplete()
+//         java.util.NoSuchElementException: com.hyf.proxyserver.server.http.HttpServerConnectHandler
+//         at io.netty.channel.DefaultChannelPipeline.getContextOrDie(DefaultChannelPipeline.java:1082)
+//         at io.netty.channel.DefaultChannelPipeline.remove(DefaultChannelPipeline.java:417)
+//         at com.hyf.proxyserver.server.http.HttpServerConnectHandler$1$2.operationComplete(HttpServerConnectHandler.java:87)
+//         at com.hyf.proxyserver.server.http.HttpServerConnectHandler$1$2.operationComplete(HttpServerConnectHandler.java:84)
+//         at io.netty.util.concurrent.DefaultPromise.notifyListener0(DefaultPromise.java:590)
+//         at io.netty.util.concurrent.DefaultPromise.notifyListenersNow(DefaultPromise.java:557)
+//         at io.netty.util.concurrent.DefaultPromise.notifyListeners(DefaultPromise.java:492)
+//         at io.netty.util.concurrent.DefaultPromise.addListener(DefaultPromise.java:185)
+//         at io.netty.channel.DefaultChannelPromise.addListener(DefaultChannelPromise.java:95)
+//         at io.netty.channel.DefaultChannelPromise.addListener(DefaultChannelPromise.java:30)
+//         at com.hyf.proxyserver.server.http.HttpServerConnectHandler$1.operationComplete(HttpServerConnectHandler.java:84)
+//         at io.netty.util.concurrent.DefaultPromise.notifyListener0(DefaultPromise.java:590)
+//         at io.netty.util.concurrent.DefaultPromise.notifyListenersNow(DefaultPromise.java:557)
+//         at io.netty.util.concurrent.DefaultPromise.notifyListeners(DefaultPromise.java:492)
+//         at io.netty.util.concurrent.DefaultPromise.setValue0(DefaultPromise.java:636)
+//         at io.netty.util.concurrent.DefaultPromise.setSuccess0(DefaultPromise.java:625)
+//         at io.netty.util.concurrent.DefaultPromise.setSuccess(DefaultPromise.java:97)
+//         at com.hyf.proxyserver.server.DirectClientHandler.channelActive(DirectClientHandler.java:34)
+//         at io.netty.channel.AbstractChannelHandlerContext.invokeChannelActive(AbstractChannelHandlerContext.java:260)
+//         at io.netty.channel.AbstractChannelHandlerContext.invokeChannelActive(AbstractChannelHandlerContext.java:238)
+//         at io.netty.channel.AbstractChannelHandlerContext.fireChannelActive(AbstractChannelHandlerContext.java:231)
+//         at io.netty.channel.DefaultChannelPipeline$HeadContext.channelActive(DefaultChannelPipeline.java:1398)
+//         at io.netty.channel.AbstractChannelHandlerContext.invokeChannelActive(AbstractChannelHandlerContext.java:258)
+//         at io.netty.channel.AbstractChannelHandlerContext.invokeChannelActive(AbstractChannelHandlerContext.java:238)
+//         at io.netty.channel.DefaultChannelPipeline.fireChannelActive(DefaultChannelPipeline.java:895)
+//         at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.fulfillConnectPromise(AbstractNioChannel.java:306)
+//         at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:336)
+//         at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:776)
+//         at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:724)
+//         at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:650)
+//         at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562)
+//         at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+//         at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+//         at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+//         at java.lang.Thread.run(Thread.java:748)
+

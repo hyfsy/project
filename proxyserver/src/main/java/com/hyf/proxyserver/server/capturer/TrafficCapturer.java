@@ -1,31 +1,25 @@
 
 package com.hyf.proxyserver.server.capturer;
 
-import io.netty.channel.Channel;
+import com.hyf.proxyserver.server.relay.RelayContext;
 
 public interface TrafficCapturer {
 
     /**
      * 过滤包
      *
-     * @param inboundChannel  入站通道
-     * @param outboundChannel 出站通道
-     * @param msg             监听的消息
-     * @param fromClient      消息是客户端发的返回true，否则返回false
+     * @param context 中继上下文
      * @return 过滤包返回true，否则返回false
      */
-    default boolean accept(Channel inboundChannel, Channel outboundChannel, Object msg, boolean fromClient) {
+    default boolean accept(RelayContext<?> context) {
         return true;
     }
 
     /**
      * 流量捕获
      *
-     * @param inboundChannel  入站通道
-     * @param outboundChannel 出站通道
-     * @param msg             监听的消息
-     * @param fromClient      消息是客户端发的返回true，否则返回false
+     * @param context 中继上下文
      */
-    Object capture(Channel inboundChannel, Channel outboundChannel, Object msg, boolean fromClient);
+    void capture(RelayContext<?> context);
 
 }

@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.hyf.proxyserver.server.capturer.TrafficCapturer;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
@@ -14,32 +15,35 @@ public final class Intermediary {
 
     private static final InternalLogger LOG = InternalLoggerFactory.getInstance(Intermediary.class);
 
-    private static final List<TrafficCapturer> listeners = new CopyOnWriteArrayList<>();
+    private static final List<TrafficCapturer> capturers = new CopyOnWriteArrayList<>();
 
     static {
         ServiceLoader.load(TrafficCapturer.class).forEach(Intermediary::addListener);
     }
 
     /* package */
-    static Object capture(Channel inboundChannel, Channel outboundChannel, Object msg,
-                          boolean fromClient) {
-        for (TrafficCapturer listener : listeners) {
-            if (listener.accept(inboundChannel, outboundChannel, msg, fromClient)) {
-                msg = listener.capture(inboundChannel, outboundChannel, msg, fromClient);
+    static void capture(ChannelHandlerContext ctx, Channel outboundChannel, Object msg) {
+        DefaultRelayContext context = new DefaultRelayContext(ctx, outboundChannel, msg);
+        for (TrafficCapturer capturer : capturers) {
+            if (capturer.accept(context)) {
+                capturer.capture(context);
+            }
+            if (context.finished() && !context.isContinueCaptureWhenFinished()) {
+                break;
             }
         }
-        return msg;
+        context.fireRelayFinished();
     }
 
     public static void addListener(TrafficCapturer listener) {
-        listeners.add(listener);
+        capturers.add(listener);
     }
 
     public static void removeListener(TrafficCapturer listener) {
-        listeners.remove(listener);
+        capturers.remove(listener);
     }
 
     public static void clearListener() {
-        listeners.clear();
+        capturers.clear();
     }
 }

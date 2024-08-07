@@ -2,14 +2,11 @@ package com.hyf.proxyserver.server.http;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpMethod;
-import io.netty.util.AsciiString;
-import io.netty.util.AttributeKey;
 
-import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class HttpUtils {
 
@@ -52,5 +49,66 @@ public class HttpUtils {
         }
 
         return matchHttp ? buffer : null;
+    }
+
+    public static boolean isHttpPacket2(ByteBuf buffer) {
+        int maxRawLen = 1042; // 7 + 1 + 1024 + 1 + 8 + 1
+        int lineEndIdx = -1;
+        for (int i = 0; i < maxRawLen; i++) {
+            if (buffer.readableBytes() <= i) {
+                break;
+            }
+            if (buffer.getByte(i) == '\r' || buffer.getByte(i) == '\n') {
+                lineEndIdx = i;
+                break;
+            }
+        }
+        if (lineEndIdx == -1) {
+            return false;
+        }
+
+        String firstLine = buffer.toString(0, lineEndIdx, StandardCharsets.UTF_8);
+        String[] segments = firstLine.split(" ");
+        if (segments.length != 3) {
+            return false;
+        }
+
+        return isRequestPacket(segments) || isResponsePacket(segments);
+    }
+
+    // GET http://www.baidu.com/ HTTP/1.1
+    private static boolean isRequestPacket(String[] segments) {
+        boolean a = false;
+        boolean b = false;
+        boolean c = false;
+        String segment1 = segments[0];
+        String segment2 = segments[1];
+        String segment3 = segments[2];
+        for (HttpMethod method : methods) {
+            if (method.asciiName().contentEqualsIgnoreCase(segment1)) {
+                a = true;
+                break;
+            }
+        }
+        if (segment2.startsWith("http")) {
+            b = true;
+        }
+        if (segment3.startsWith("HTTP/")) {
+            c = true;
+        }
+        return a && b && c;
+    }
+
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("\\d+");
+
+    // HTTP/1.1 200 OK
+    private static boolean isResponsePacket(String[] segments) {
+        String segment1 = segments[0];
+        String segment2 = segments[1];
+
+        boolean a = segment1.startsWith("HTTP/");
+        boolean b = NUMBER_PATTERN.matcher(segment2).matches();
+
+        return a && b;
     }
 }

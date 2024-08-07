@@ -1,6 +1,7 @@
 package com.hyf.proxyserver.extensions.http;
 
 import com.hyf.proxyserver.server.capturer.SimpleTrafficCapturer;
+import com.hyf.proxyserver.server.relay.RelayContext;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.*;
 import io.netty.util.AttributeKey;
@@ -24,7 +25,12 @@ public class DefaultHttpTrafficCapturer extends SimpleTrafficCapturer<FullHttpMe
     }
 
     @Override
-    protected FullHttpMessage capture0(Channel inboundChannel, Channel outboundChannel, FullHttpMessage msg, boolean fromClient) {
+    protected void capture0(RelayContext<FullHttpMessage> context) {
+
+        FullHttpMessage msg = context.getRelayMsg();
+        Channel inboundChannel = context.getInboundChannel();
+        Channel outboundChannel = context.getOutboundChannel();
+        boolean fromClient = context.fromClient();
 
         boolean isRequest = msg instanceof FullHttpRequest;
         boolean isResponse = msg instanceof FullHttpResponse;
@@ -32,59 +38,54 @@ public class DefaultHttpTrafficCapturer extends SimpleTrafficCapturer<FullHttpMe
         if (isRequest) {
             FullHttpRequest request = (FullHttpRequest) msg;
             if (fromClient) {
-                request = captureClientRequest(inboundChannel, outboundChannel, request);
+                captureClientRequest((RelayContext) context, request);
             } else {
-                request = captureRemoteRequest(inboundChannel, outboundChannel, request);
+                captureRemoteRequest((RelayContext) context, request);
             }
+            request = (FullHttpRequest) context.getRelayMsg();
             // 方便服务端响应处理时可获取
             pushRequest(inboundChannel, request.copy());
-            return request;
         }
-        if (isResponse) {
+        //
+        else if (isResponse) {
             FullHttpResponse response = (FullHttpResponse) msg;
             RequestData requestData = popRequest(outboundChannel);
             try {
                 if (fromClient) {
-                    response = captureClientResponse(inboundChannel, outboundChannel, requestData.request, response);
+                    captureClientResponse((RelayContext) context, requestData.request, response);
                 } else {
-                    response = captureRemoteResponse(inboundChannel, outboundChannel, requestData.request, response);
+                    captureRemoteResponse((RelayContext) context, requestData.request, response);
                 }
             } finally {
                 requestData.release();
             }
-            return response;
         }
-        return msg;
     }
 
-    private FullHttpRequest captureClientRequest(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request) {
+    private void captureClientRequest(RelayContext<FullHttpRequest> context, FullHttpRequest request) {
         for (HttpTrafficCapturer httpTrafficCapturer : httpTrafficCapturers) {
-            request = httpTrafficCapturer.captureClientRequest(inboundChannel, outboundChannel, request);
+            httpTrafficCapturer.captureClientRequest(context, request);
         }
-        return request;
     }
 
     @Deprecated
-    private FullHttpResponse captureClientResponse(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request, FullHttpResponse response) {
+    private void captureClientResponse(RelayContext<FullHttpResponse> context, FullHttpRequest request, FullHttpResponse response) {
         for (HttpTrafficCapturer httpTrafficCapturer : httpTrafficCapturers) {
-            response = httpTrafficCapturer.captureClientResponse(inboundChannel, outboundChannel, request, response);
+            httpTrafficCapturer.captureClientResponse(context, request, response);
         }
-        return response;
     }
 
     @Deprecated
-    private FullHttpRequest captureRemoteRequest(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request) {
+    private void captureRemoteRequest(RelayContext<FullHttpRequest> context, FullHttpRequest request) {
         for (HttpTrafficCapturer httpTrafficCapturer : httpTrafficCapturers) {
-            request = httpTrafficCapturer.captureRemoteRequest(inboundChannel, outboundChannel, request);
+            httpTrafficCapturer.captureRemoteRequest(context, request);
         }
-        return request;
     }
 
-    private FullHttpResponse captureRemoteResponse(Channel inboundChannel, Channel outboundChannel, FullHttpRequest request, FullHttpResponse response) {
+    private void captureRemoteResponse(RelayContext<FullHttpResponse> context, FullHttpRequest request, FullHttpResponse response) {
         for (HttpTrafficCapturer httpTrafficCapturer : httpTrafficCapturers) {
-            response = httpTrafficCapturer.captureRemoteResponse(inboundChannel, outboundChannel, request, response);
+            httpTrafficCapturer.captureRemoteResponse(context, request, response);
         }
-        return response;
     }
 
     private RequestData popRequest(Channel channel) {

@@ -171,7 +171,9 @@ final class OpenJdkSelfSignedCertGenerator {
 
         CERT_INFO_SET_METHOD.invoke(info, X509CertInfo.VERSION, new CertificateVersion(CertificateVersion.V3));
         CERT_INFO_SET_METHOD.invoke(info, X509CertInfo.SERIAL_NUMBER,
-                new CertificateSerialNumber(new BigInteger(64, random)));
+                new CertificateSerialNumber(new BigInteger(127, random)));
+        // CERT_INFO_SET_METHOD.invoke(info, X509CertInfo.SERIAL_NUMBER,
+        //         new CertificateSerialNumber(new BigInteger(64, random)));
         try {
             CERT_INFO_SET_METHOD.invoke(info, X509CertInfo.SUBJECT, new CertificateSubjectName(subject));
         } catch (InvocationTargetException ex) {
@@ -199,18 +201,18 @@ final class OpenJdkSelfSignedCertGenerator {
         // ROOT CA
         if (root) {
             // TODO 根证书不能添加extensions字段，否则会有问题，目前不明确是什么问题
-            // CertificateExtensions extensions = new CertificateExtensions();
-            // extensions.set(BasicConstraintsExtension.NAME, new BasicConstraintsExtension(true, true, Integer.MAX_VALUE));
-            // extensions.set(KeyUsageExtension.NAME, new KeyUsageExtension(new boolean[]{true, false, true, false, false, true, true}));
-            // extensions.set(SubjectAlternativeNameExtension.NAME, new SubjectAlternativeNameExtension(new GeneralNames().add(new GeneralName(new DNSName("proxyserver")))));
-            // extensions.set(SubjectKeyIdentifierExtension.NAME, new SubjectKeyIdentifierExtension(new KeyIdentifier(caKeyPair.getPublic()).getIdentifier()));
-            // CERT_INFO_SET_METHOD.invoke(info, X509CertInfo.EXTENSIONS, extensions);
+            CertificateExtensions extensions = new CertificateExtensions();
+            extensions.set(BasicConstraintsExtension.NAME, new BasicConstraintsExtension(true, true, Integer.MAX_VALUE));
+            extensions.set(KeyUsageExtension.NAME, new KeyUsageExtension(new boolean[]{true, false, true, false, false, true, true}));
+            extensions.set(SubjectAlternativeNameExtension.NAME, new SubjectAlternativeNameExtension(new GeneralNames().add(new GeneralName(new DNSName("proxyserver")))));
+            extensions.set(SubjectKeyIdentifierExtension.NAME, new SubjectKeyIdentifierExtension(new KeyIdentifier(caKeyPair.getPublic()).getIdentifier()));
+            CERT_INFO_SET_METHOD.invoke(info, X509CertInfo.EXTENSIONS, extensions);
         }
         // Child CA
         else {
             CertificateExtensions extensions = new CertificateExtensions();
             // 重要：添加扩展属性，否则浏览器不识别 SubjectAlternativeName
-            extensions.set(SubjectAlternativeNameExtension.NAME, new SubjectAlternativeNameExtension(new GeneralNames().add(new GeneralName(new DNSName(subjectFqdn)))));
+            // extensions.set(SubjectAlternativeNameExtension.NAME, new SubjectAlternativeNameExtension(new GeneralNames().add(new GeneralName(new DNSName(subjectFqdn)))));
             // 其他不必要
             extensions.set(BasicConstraintsExtension.NAME, new BasicConstraintsExtension(true, false, -1));
             extensions.set(KeyUsageExtension.NAME, new KeyUsageExtension(new boolean[]{true, false, true}));

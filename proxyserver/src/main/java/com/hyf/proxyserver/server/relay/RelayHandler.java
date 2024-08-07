@@ -36,9 +36,7 @@ public final class RelayHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (relayChannel.isActive()) {
-            boolean fromClient = ctx.channel().parent() != null;
-            msg = Intermediary.capture(ctx.channel(), relayChannel, msg, fromClient);
-            relayChannel.writeAndFlush(msg);
+            Intermediary.capture(ctx, relayChannel, msg);
         } else {
             ReferenceCountUtil.release(msg);
         }

@@ -14,5 +14,6 @@ public class DefaultHttpRelayChannelInitializer implements RelayChannelInitializ
         outboundChannel.pipeline().addLast(new HttpObjectAggregator(Integer.MAX_VALUE));
         inboundChannel.pipeline().addLast(new HttpServerCodec());
         inboundChannel.pipeline().addLast(new HttpObjectAggregator(Integer.MAX_VALUE));
+        inboundChannel.pipeline().addLast(new CaCertificateDownloadChannelHandler());
     }
 }
